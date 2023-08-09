@@ -7,8 +7,8 @@ export const createTransactionObject = (transaction: any) => {
     from: transaction.from,
     to: transaction.to,
     blockNumber: transaction.blockNumber,
-    timestamp: new Date(parseInt(transaction.timeStamp * 1000)).toLocaleDateString(),
-    time: new Date(parseInt(transaction.timeStamp * 1000)).toLocaleTimeString([], {
+    timestamp: new Date(parseInt(transaction.timeStamp) * 1000).toLocaleDateString(),
+    time: new Date(parseInt(transaction.timeStamp) * 1000).toLocaleTimeString([], {
       hour: "numeric",
       minute: "2-digit",
     })
@@ -39,7 +39,7 @@ export const createTransactionObjectByEvent = (event: any) => {
   );
   return {
     transactionHash: event.transactionHash,
-    value: parseFloat(transaction.value) / 1e18,
+    value: parseFloat(transaction.value as string) / 1e18,
     from: transaction.from,
     to: transaction.to,
     blockNumber: event.blockNumber.toString(),

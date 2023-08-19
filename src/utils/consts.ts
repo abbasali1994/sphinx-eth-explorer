@@ -20,4 +20,4 @@ export const DAI_TOKEN = {
 
 export const CHAIN_ID = '0x5'
 
-export const web3 = new Web3("wss://goerli.infura.io/ws/v3/081ef49860d24c1eb109c97454700a02");
+export const web3 = new Web3("wss://mainnet.infura.io/ws/v3/081ef49860d24c1eb109c97454700a02");

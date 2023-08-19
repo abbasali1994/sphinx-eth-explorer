@@ -1,13 +1,12 @@
-import React, { useContext, useState, useEffect } from "react";
+import { useContext, useState } from "react";
 import BootstrapTable from "react-bootstrap-table-next";
 import filterFactory from "react-bootstrap-table2-filter";
-import formatAddress from "../utils/formatAddress";
-import { fetchTransactionList } from "../utils/api";
 import { SyncLoader } from "react-spinners";
 import { Button, Input } from "reactstrap";
 import { WalletContext } from "../context/WalletContext";
+import { fetchTransactionList } from "../utils/api";
+import formatAddress from "../utils/formatAddress";
 import { AddressTooltip } from "./Tooltip";
-import { off } from "process";
 const columns = [
   {
     dataField: "timestamp",
@@ -23,7 +22,7 @@ const columns = [
     dataField: "transactionHash",
     text: "Transaction Hash",
     formatter: (cell, row) => (
-      <a href={`https://goerli.etherscan.io/tx/${cell}`} target="_blank" rel="noopener noreferrer">
+      <a href={`https://mainnet.etherscan.io/tx/${cell}`} target="_blank" rel="noopener noreferrer">
         {formatAddress(cell)}
       </a>
     ),

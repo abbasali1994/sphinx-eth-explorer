@@ -10,7 +10,7 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 ## Features
 
-The application connects to wallet on goerli ethereum testnet and displays ETH and DAI balances.
+The application connects to wallet on ethereum mainnet and displays ETH and DAI balances.
 
 It also displays all the previous Dai txns occured for that particular address.
 

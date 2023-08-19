@@ -3,8 +3,8 @@ import { createTransactionObjectByEvent } from "@/utils/txns";
 import { createContext, useEffect, useState } from "react";
 import Web3 from "web3";
 import { fetchTransactionList } from "../utils/api";
-import { getBalance, getSignerAddress, getUSDCBalance, isValidAddress } from "../utils/ethersUtils";
-const web3 = new Web3("wss://goerli.infura.io/ws/v3/081ef49860d24c1eb109c97454700a02");
+import { getBalance, getUSDCBalance, isValidAddress } from "../utils/ethersUtils";
+const web3 = new Web3("wss://mainnet.infura.io/ws/v3/081ef49860d24c1eb109c97454700a02");
 
 export interface WalletContextType {
   address: string | null;

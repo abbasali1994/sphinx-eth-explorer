@@ -19,7 +19,7 @@ const WalletDetails = () => {
           Ether Balance:
         </Col>
         <Col sm={6} className="value">
-          {bal.substring(0, 8)}
+          {bal?.substring(0, 8)}
         </Col>
       </Row>
       <Row>

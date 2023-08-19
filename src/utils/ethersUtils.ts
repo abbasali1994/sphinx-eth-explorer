@@ -39,9 +39,8 @@ export const isValidAddress = (receiversAddress: any) => {
 	}
 }
 
-export const getBalance = async () => {
+export const getBalance = async (address: string) => {
 	try {
-		const address = await getSignerAddress()
 		const provider = new ethers.providers.Web3Provider(window.ethereum)
 		const balance = await provider.getBalance(address)
 		const balanceInEther = ethers.utils.formatEther(balance)
@@ -52,26 +51,12 @@ export const getBalance = async () => {
 	}
 }
 
-export const getUSDCBalance = async () => {
+export const getUSDCBalance = async (address: string) => {
 	const provider = new ethers.providers.Web3Provider(window.ethereum)
 	const signer = provider.getSigner()
 	let tokenContract = new ethers.Contract(DAI_TOKEN.address, ERC20_ABI, signer)
-	const signerAdd = await signer.getAddress()
-	const balance = await tokenContract.balanceOf(signerAdd)
+	const balance = await tokenContract.balanceOf(address)
 	const balanceInWei = balance.toString()
 	const balanceInDecimals = ethers.utils.formatEther(balanceInWei)
 	return balanceInDecimals.slice(0, 7)
-}
-
-export const getGasPrice = async () => {
-	try {
-		const provider = new ethers.providers.Web3Provider(window.ethereum)
-		const gasPrice = await provider.getGasPrice()
-		const gasPriceInWei = gasPrice.toString()
-		const gasPriceInGwei = ethers.utils.formatUnits(gasPriceInWei, 'gwei')
-		return gasPriceInGwei
-	} catch (error) {
-		console.log('Error fetching gas price:', error)
-		return null
-	}
 }

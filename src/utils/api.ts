@@ -1,6 +1,5 @@
 import { DAI_TOKEN } from "./consts";
-import { createTransactionObject } from "./txns"; 
-
+import { createTransactionObject } from "./txns";
 export const fetchTransactionList = async (
   address: string,
   page: number,
@@ -13,4 +12,3 @@ export const fetchTransactionList = async (
   const transactionData = response.result.map((item: any) => createTransactionObject(item));
   return transactionData;
 };
-

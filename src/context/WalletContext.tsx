@@ -12,9 +12,8 @@ export interface WalletContextType {
   tokenBal: number | null;
   transactionList: any[];
   setTransactionList: any;
-  connectWallet: () => Promise<void>;
+  connectWallet: (address: string) => Promise<void>;
   disconnectWallet: () => Promise<void>;
-  fetchBalances: () => Promise<void>;
 }
 
 export const WalletContext = createContext<WalletContextType>({
@@ -25,7 +24,6 @@ export const WalletContext = createContext<WalletContextType>({
   setTransactionList: [],
   connectWallet: async () => {},
   disconnectWallet: async () => {},
-  fetchBalances: async () => {},
 });
 
 export const WalletProvider = ({ children }) => {
@@ -37,76 +35,45 @@ export const WalletProvider = ({ children }) => {
   useEffect(() => {
     const init = async () => {
       try {
-        if (window.ethereum && window.ethereum.isMetaMask) {
-          const addr = await getSignerAddress();
-          const tokenBalance = await getUSDCBalance();
-          const balance = await getBalance();
-          setBal(balance);
-          setTokenBal(tokenBalance);
-          setAddress(addr);
+        const tokenBalance = await getUSDCBalance(address);
+        const balance = await getBalance(address);
+        setBal(balance);
+        setTokenBal(tokenBalance);
+        web3.eth.clearSubscriptions(false);
+        let subscription = await web3.eth.subscribe("logs", {
+          address: DAI_TOKEN.address,
+          topics: [web3.utils.sha3("Transfer(address,address,uint256)")],
+        });
+        subscription.on("data", async (event: any) => {
+          if (event.topics.length == 3) {
+            const transaction = createTransactionObjectByEvent(event);
 
-          if (isValidAddress(addr)) {
-            const transactions = await fetchTransactionList(addr, 1, 10);
-            setTransactionList(transactions);
+            setTransactionList((transactions) => {
+              if (!transactions.find((txn) => txn.transactionHash == transaction.transactionHash)) {
+                if (transaction.from == address || transaction.to == address) return [transaction, ...transactions];
+              }
+
+              return transactions;
+            });
           }
-
-          web3.eth.clearSubscriptions(false);
-          let subscription = await web3.eth.subscribe("logs", {
-            address: DAI_TOKEN.address,
-            topics: [web3.utils.sha3("Transfer(address,address,uint256)")],
-          });
-          subscription.on("data", async (event: any) => {
-            if (event.topics.length == 3) {
-              const transaction = createTransactionObjectByEvent(event);
-
-              setTransactionList((transactions) => {
-                if (!transactions.find((txn) => txn.transactionHash == transaction.transactionHash)) {
-                  if (transaction.from == address || transaction.to == address) return [transaction, ...transactions];
-                }
-
-                return transactions;
-              });
-            }
-          });
-          subscription.on("error", (err) => {
-            throw err;
-          });
-          subscription.on("connected", (nr) => console.log("Subscription on ERC-20 started with ID %s", nr));
-        }
+        });
+        subscription.on("error", (err) => {
+          throw err;
+        });
+        subscription.on("connected", (nr) => console.log("Subscription on ERC-20 started with ID %s", nr));
       } catch (err) {
         console.log(err);
       }
-
-      if (window.ethereum) {
-        window.ethereum.on("accountsChanged", connectWallet);
-      }
     };
-    init();
-  }, []);
+    if(address) init();
+  }, [address]);
 
-  const fetchBalances = async () => {
-    if (isValidAddress(address)) {
-      const tokenBalance = await getUSDCBalance();
-      const balance = await getBalance();
-      setBal(balance);
-      setTokenBal(tokenBalance);
-    }
-  };
-
-  const connectWallet = async () => {
+  const connectWallet = async (address) => {
     try {
-      if (window.ethereum && window.ethereum.isMetaMask) {
-        const addr = await getSignerAddress();
-        const tokenBalance = await getUSDCBalance();
-        const balance = await getBalance();
-        setBal(balance);
-        setTokenBal(tokenBalance);
-        setAddress(addr);
-
-        if (isValidAddress(addr)) {
-          const transactions = await fetchTransactionList(addr, 1, 10);
-          setTransactionList(transactions);
-        }
+      if (isValidAddress(address)) {
+        setAddress(address);
+        const transactions = await fetchTransactionList(address, 1, 10);
+        setTransactionList(transactions);
       }
     } catch (err) {
       console.log(err);
@@ -131,7 +98,6 @@ export const WalletProvider = ({ children }) => {
         setTransactionList,
         connectWallet,
         disconnectWallet,
-        fetchBalances,
       }}>
       {children}
     </WalletContext.Provider>

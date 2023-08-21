@@ -3,7 +3,7 @@ import { Col, Row } from "reactstrap";
 import { WalletContext } from "../context/WalletContext";
 import formatAddress from "@/utils/formatAddress";
 const WalletDetails = () => {
-  const { address, tokenBal, bal } = useContext(WalletContext);
+  const { address } = useContext(WalletContext);
   return (
     <>
       <Row>
@@ -12,22 +12,6 @@ const WalletDetails = () => {
         </Col>
         <Col sm={6} className="value">
           {formatAddress(address)}
-        </Col>
-      </Row>
-      <Row>
-        <Col sm={6} className="heading">
-          Ether Balance:
-        </Col>
-        <Col sm={6} className="value">
-          {bal?.substring(0, 8)}
-        </Col>
-      </Row>
-      <Row>
-        <Col sm={6} className="heading">
-          DAI Balance:
-        </Col>
-        <Col sm={6} className="value">
-          {tokenBal}
         </Col>
       </Row>
     </>

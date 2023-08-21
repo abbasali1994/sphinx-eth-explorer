@@ -1,4 +1,4 @@
-import { web3 } from "./consts";
+import { web3Http } from "./consts";
 
 export const createTransactionObject = (transaction: any) => {
   return {
@@ -16,7 +16,7 @@ export const createTransactionObject = (transaction: any) => {
 }
 
 export const createTransactionObjectByEvent = (event: any) => {
-  let transaction = web3.eth.abi.decodeLog(
+  let transaction = web3Http.eth.abi.decodeLog(
     [
       {
         type: "uint256",

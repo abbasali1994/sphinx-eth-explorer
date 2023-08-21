@@ -4,7 +4,6 @@ import filterFactory from "react-bootstrap-table2-filter";
 import { SyncLoader } from "react-spinners";
 import { Button, Input } from "reactstrap";
 import { WalletContext } from "../context/WalletContext";
-import { fetchTransactionList } from "../utils/api";
 import formatAddress from "../utils/formatAddress";
 import { AddressTooltip } from "./Tooltip";
 const columns = [
@@ -22,7 +21,7 @@ const columns = [
     dataField: "transactionHash",
     text: "Transaction Hash",
     formatter: (cell, row) => (
-      <a href={`https://mainnet.etherscan.io/tx/${cell}`} target="_blank" rel="noopener noreferrer">
+      <a href={`https://etherscan.io/tx/${cell}`} target="_blank" rel="noopener noreferrer">
         {formatAddress(cell)}
       </a>
     ),
@@ -59,23 +58,16 @@ const columns = [
 ];
 
 function TransactionHistoryTable() {
-  const { address, transactionList, setTransactionList } = useContext(WalletContext);
-  const [isLoading, setIsLoading] = useState(false);
+  const { transactionList, isLoading } = useContext(WalletContext);
+
   const [currentPage, setCurrentPage] = useState(1);
   const [sizePerPage, setSizePerPage] = useState(10);
 
-  const onPageChange = async (page, offset) => {
-    setIsLoading(true);
-    const isAlreadyFetched = transactionList.length >= page * offset;
-    if (!isAlreadyFetched) {
-      const transactions = await fetchTransactionList(address, page, offset);
-      setTransactionList([...transactionList, ...transactions]);
-    }
-    setIsLoading(false);
+  const onPageChange = async (page) => {
     setCurrentPage(page);
   };
 
-  return isLoading ? (
+  return isLoading && !transactionList.slice((currentPage - 1) * sizePerPage, currentPage * sizePerPage).length ? (
     <span style={{ display: "flex", marginTop: "30px" }}>
       Loading Transactions <SyncLoader size={10} style={{ marginLeft: "10px" }} />
     </span>
@@ -99,7 +91,7 @@ function TransactionHistoryTable() {
               value={sizePerPage}
               onChange={(e: any) => {
                 setSizePerPage(e.target.value);
-                onPageChange(currentPage, e.target.value);
+                onPageChange(currentPage);
               }}>
               <option value={5}>5</option>
               <option value={10}>10</option>
@@ -109,7 +101,7 @@ function TransactionHistoryTable() {
                 color="primary"
                 size="sm"
                 className="mx-1"
-                onClick={() => onPageChange(currentPage - 1, sizePerPage)}
+                onClick={() => onPageChange(currentPage - 1)}
                 disabled={currentPage === 1}>
                 Prev
               </Button>
@@ -118,8 +110,8 @@ function TransactionHistoryTable() {
                 color="primary"
                 size="sm"
                 className="mx-1"
-                onClick={() => onPageChange(currentPage + 1, sizePerPage)}
-                disabled={transactionList.length < sizePerPage}>
+                onClick={() => onPageChange(currentPage + 1)}
+                disabled={transactionList.length <= currentPage * sizePerPage}>
                 Next
               </Button>
             </div>

@@ -1,31 +1,34 @@
-import React, { useContext } from "react";
-import { Button, Card, CardBody } from "reactstrap";
+import { useContext } from "react";
+import { Button, Card, CardBody, Col, Row } from "reactstrap";
 import { WalletContext } from "../context/WalletContext";
-import WalletDetails from "./WalletDetails";
 import TransactionHistoryTable from "./TranxTable";
 const ConnectedWalletInfo = () => {
-  const { disconnectWallet } = useContext(WalletContext);
+  const { address, disconnectWallet } = useContext(WalletContext);
 
   return (
     <>
       <Card
         style={{
-          width: "400px",
+          width: "600px",
           fontWeight: "bold",
           margin: "auto",
           top: "20px",
-        }}
-      >
+        }}>
         <CardBody>
-          <WalletDetails />
+          <Row>
+            <Col sm={3} className="heading">
+              Account:
+            </Col>
+            <Col sm={9} className="value">
+              {address}
+            </Col>
+          </Row>
           <Button color="primary" block onClick={() => disconnectWallet()}>
             Disconnect Wallet
           </Button>
         </CardBody>
       </Card>
-      <div 
-        style={{ display: "flex", justifyContent: "center", margin: "20px" }}
-      >
+      <div style={{ display: "flex", justifyContent: "center", margin: "20px" }}>
         <TransactionHistoryTable />
       </div>
     </>
